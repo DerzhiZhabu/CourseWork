@@ -1,0 +1,123 @@
+<body class="main_body">
+<div class="app-layout">
+
+  <header class="top-bar">
+    <div class="auth-buttons">
+      <button
+        size="l"
+        tuiButton
+        type="button"
+        (click)="showDialogLogin()"
+        class="btn login-btn"
+      > Вход
+      </button>
+      <button
+        size="l"
+        tuiButton
+        type="button"
+        (click)="showDialogRegister()"
+        class="btn reg-btn"
+      > Регистрация
+      </button>
+    </div>
+  </header>
+
+  <main class="main">
+    <div class="dialogs">
+      <ng-template
+        [tuiDialogOptions]="{label: 'Вход', size: 's'}"
+        [(tuiDialog)]="openLogin"
+      >
+        <form
+          class="dialog-form"
+          [formGroup]="LoginForm"
+          (ngSubmit)="onLoginSubmit()"
+        >
+          <tui-textfield>
+            <label tuiLabel>Введите логин</label>
+            <input
+              formControlName="login"
+              tuiTextfield
+            />
+          </tui-textfield>
+
+          <tui-textfield>
+            <label tuiLabel>Введите пароль</label>
+            <input
+              formControlName="password"
+              tuiTextfield
+              type="password"
+            />
+            <tui-icon tuiPassword />
+          </tui-textfield>
+
+          <tui-error *ngIf="loginErrorMessage" class="dialog-error" [error]="loginErrorMessage"></tui-error>
+
+          <p class="dialog-actions">
+            <button
+              tuiButton
+              type="submit"
+              [disabled]="loginLoading"
+            >
+              Войти
+              <tui-loader *ngIf="loginLoading" [inheritColor]="true"></tui-loader>
+            </button>
+          </p>
+        </form>
+      </ng-template>
+
+      <ng-template
+        [tuiDialogOptions]="{label: 'Регистрация', size: 's'}"
+        [(tuiDialog)]="openRegister"
+      >
+        <form
+          class="dialog-form"
+          [formGroup]="RegisterForm"
+          (ngSubmit)="onRegisterSubmit()"
+        >
+          <tui-textfield>
+            <label tuiLabel>Введите логин</label>
+            <input
+              formControlName="login"
+              tuiTextfield
+            />
+          </tui-textfield>
+
+          <tui-textfield>
+            <label tuiLabel>Введите пароль</label>
+            <input
+              formControlName="password"
+              tuiTextfield
+              type="password"
+            />
+            <tui-icon tuiPassword />
+          </tui-textfield>
+
+          <tui-textfield>
+            <label tuiLabel>Подтвердите пароль</label>
+            <input
+              formControlName="confirmPassword"
+              tuiTextfield
+              type="password"
+            />
+            <tui-icon tuiPassword />
+          </tui-textfield>
+
+          <tui-error *ngIf="registerErrorMessage" class="dialog-error" [error]="registerErrorMessage"></tui-error>
+
+          <p class="dialog-actions">
+            <button
+              tuiButton
+              type="submit"
+              [disabled]="registerLoading"
+            >
+              Зарегистрироваться
+              <tui-loader *ngIf="registerLoading" [inheritColor]="true"></tui-loader>
+            </button>
+          </p>
+        </form>
+      </ng-template>
+    </div>
+  </main>
+</div>
+</body>

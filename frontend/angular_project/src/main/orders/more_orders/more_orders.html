@@ -1,0 +1,194 @@
+<div class="more_order_dialog">
+  <ng-template
+    [tuiDialogOptions]="{label: number ? 'Подробнее о заказе №' + number : 'Подробнее о заказе', size: 'l'}"
+    [(tuiDialog)]="openMoreOrders"
+    (tuiDialogChange)="onDialogStateChange($event)"
+  >
+    <form
+      id="more-order-form"
+      class="dialog-form order-form"
+      [formGroup]="MoreOrdersForm"
+      (ngSubmit)="onUpdateOrderSubmit()"
+    >
+      <tui-textfield>
+        <label tuiLabel>Название заказа</label>
+        <input formControlName="name" tuiTextfield [readOnly]="isOrderLocked" />
+      </tui-textfield>
+
+      <tui-textfield>
+        <label tuiLabel>Клиент</label>
+        <input formControlName="client" tuiTextfield [readOnly]="isOrderLocked" />
+      </tui-textfield>
+
+      <tui-textfield>
+        <label tuiLabel>Телефон</label>
+        <input
+          autocomplete="tel"
+          mask="+7 ### ###-##-##"
+          tuiInputPhone
+          formControlName="phone"
+          [attr.pattern]="pattern"
+          [readOnly]="isOrderLocked"
+        />
+      </tui-textfield>
+
+      <tui-textfield tuiChevron>
+        <label>Тип транспорта</label>
+        <input
+          tuiComboBox
+          formControlName="type"
+          [readOnly]="isOrderLocked"
+        />
+        <tui-data-list-wrapper
+          *tuiTextfieldDropdown
+          new
+          [items]="autoTypes"
+        />
+      </tui-textfield>
+
+      <tui-textfield tuiChevron>
+        <label>Статус заказа</label>
+        <input
+          tuiComboBox
+          formControlName="sost"
+          [readOnly]="isOrderStatusLocked"
+        />
+        <tui-data-list-wrapper
+          *tuiTextfieldDropdown
+          new
+          [items]="availableOrderStatuses"
+        />
+      </tui-textfield>
+
+      <div class="order-dates">
+        <tui-textfield>
+          <label tuiLabel>Дата создания</label>
+          <input
+            tuiInputDate
+            [ngModel]="createdDate"
+            [ngModelOptions]="{standalone: true}"
+            [readOnly]="true"
+          />
+        </tui-textfield>
+
+        <tui-textfield *ngIf="closedDate">
+          <label tuiLabel>Дата закрытия</label>
+          <input
+            tuiInputDate
+            [ngModel]="closedDate"
+            [ngModelOptions]="{standalone: true}"
+            [readOnly]="true"
+          />
+        </tui-textfield>
+      </div>
+    </form>
+
+    <tui-error *ngIf="error" class="dialog-error" [error]="error"></tui-error>
+
+    <div class="page-loader" *ngIf="loading">
+      <tui-loader [inheritColor]="true">Загрузка услуг заказа...</tui-loader>
+    </div>
+
+    <table
+      *ngIf="data.length; else emptyServicesState"
+      tuiTable
+      class="table"
+      [columns]="columns"
+      size="l"
+    >
+      <thead>
+      <tr tuiThGroup>
+        <th tuiTh>Название услуги</th>
+        <th tuiTh>Цена за ед.</th>
+        <th tuiTh>Количество</th>
+        <th tuiTh>Итого</th>
+        <th tuiTh>Сотрудник</th>
+        <th tuiTh>Статус</th>
+        <th tuiTh class="action-head"></th>
+      </tr>
+      </thead>
+      <tbody tuiTbody [data]="data">
+      <tr *ngFor="let item of data" tuiTr>
+        <td *tuiCell="'sname'" tuiTd>{{ item.sname }}</td>
+        <td *tuiCell="'price'" tuiTd class="money-cell">{{ item.price | number:'1.2-2' }}₽</td>
+        <td *tuiCell="'samount'" tuiTd>{{ item.samount }}</td>
+        <td *tuiCell="'summary'" tuiTd class="money-cell">{{ item.price * item.samount | number:'1.2-2' }}₽</td>
+        <td *tuiCell="'worker'" tuiTd>{{ item.worker }}</td>
+        <td *tuiCell="'sost'" tuiTd>
+          <span class="status-cell">
+            <span class="status-dot" [ngClass]="getServiceStatusClass(item)"></span>
+            <span>{{ getServiceStatusLabel(item) }}</span>
+          </span>
+        </td>
+        <td *tuiCell="'button'" tuiTd class="action-cell">
+          <button
+            *ngIf="item.sost !== 1"
+            appearance="flat"
+            iconStart="@tui.check"
+            tuiButton
+            type="button"
+            [disabled]="isOrderLocked || serviceActionOsId === item.osid"
+            (click)="onCompleteServiceOpen(item)"
+          >
+          </button>
+          <button
+            *ngIf="item.sost === 1 && canUndoCompletedServices"
+            appearance="flat"
+            iconStart="@tui.rotate-ccw"
+            tuiButton
+            type="button"
+            [disabled]="isOrderLocked || serviceActionOsId === item.osid"
+            (click)="onUndoService(item)"
+          >
+          </button>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+
+    <ng-template #emptyServicesState>
+      <p *ngIf="!loading && !error" class="dialog-empty">В заказе пока нет услуг.</p>
+    </ng-template>
+
+    <div class="dialog-footer">
+      <button
+        class="dialog-save"
+        tuiButton
+        type="submit"
+        form="more-order-form"
+        [disabled]="saving || !canSubmitOrderChanges"
+      >
+        Сохранить
+        <tui-loader *ngIf="saving" [inheritColor]="true"></tui-loader>
+      </button>
+
+      <p class="dialog-summary">Общая стоимость заказа: {{ totalPrice | number:'1.2-2' }}₽</p>
+
+      <button
+        class="dialog-add-service"
+        tuiButton
+        type="button"
+        [disabled]="isOrderLocked"
+        (click)="onAddServicesOpen()"
+      >
+        Добавить услугу
+      </button>
+    </div>
+
+    <app-add_services
+      [openAddServices]="openAddServices"
+      [orderNumber]="number"
+      [orderLocked]="isOrderLocked"
+      (added)="onServiceAdded()"
+      (closed)="onAddServicesClose()"
+    ></app-add_services>
+
+    <app-complete_service
+      *ngIf="selectedService"
+      [openCompleteService]="openCompleteService"
+      [serviceInfo]="selectedService"
+      (completed)="onServiceCompleted($event)"
+      (closed)="onCompleteServiceClose()"
+    ></app-complete_service>
+  </ng-template>
+</div>

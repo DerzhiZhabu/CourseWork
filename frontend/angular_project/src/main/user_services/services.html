@@ -1,0 +1,73 @@
+<div class="page-content">
+  <div class="page-header">
+    <div class="page-loader" *ngIf="loading">
+      <tui-loader [inheritColor]="true">Загрузка услуг...</tui-loader>
+    </div>
+  </div>
+
+  <tui-error *ngIf="error" [error]="error"></tui-error>
+
+  <table
+    *ngIf="data.length; else emptyServices"
+    tuiTable
+    class="table"
+    [columns]="columns"
+    size="l"
+  >
+    <thead>
+    <tr tuiThGroup>
+      <th tuiTh>Название</th>
+      <th tuiTh>Цена для легковых</th>
+      <th tuiTh>Цена для грузовых</th>
+      <th tuiTh class="action-head"></th>
+    </tr>
+    </thead>
+    <tbody tuiTbody [data]="data">
+    <tr *ngFor="let item of data" tuiTr>
+      <td *tuiCell="'name'" tuiTd>{{ item.name }}</td>
+      <td *tuiCell="'price l'" tuiTd>{{ item.price1 | number:'1.2-2' }} ₽</td>
+      <td *tuiCell="'price g'" tuiTd>{{ item.price2 | number:'1.2-2' }} ₽</td>
+      <td *tuiCell="'edit_button'" tuiTd class="action-cell">
+        <button
+          appearance="flat"
+          iconStart="@tui.pen-line"
+          tuiButton
+          tuiButtonVertical
+          type="button"
+          size="l"
+          (click)="showMoreService(item)"
+        >
+        </button>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+
+<ng-template #emptyServices>
+  <div class="empty-state-wrap">
+    <p class="empty-state">Здесь пока пусто, добавьте свою первую услугу</p>
+  </div>
+</ng-template>
+
+<button
+  tuiButton
+  class="floating-add-button"
+  type="button"
+  (click)="showNewService()"
+>
+  Добавить услугу
+  </button>
+
+  <app-more_service
+    *ngIf="selectedService"
+    [openMoreService]="openMoreService"
+    [serviceInfo]="selectedService"
+    (updated)="onServiceUpdated($event)"
+    (closed)="onMoreServiceClosed()"
+  ></app-more_service>
+
+  <app-new_service
+    [openNewService]="openNewService"
+    (closed)="onNewServiceClosed()"
+  ></app-new_service>
+</div>

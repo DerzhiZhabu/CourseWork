@@ -1,0 +1,44 @@
+<div class="complete_service_dialog">
+  <ng-template
+    let-observer
+    [tuiDialogOptions]="{label: 'Выполнение услуги', size: 's'}"
+    [(tuiDialog)]="openCompleteService"
+    (tuiDialogChange)="onDialogStateChange($event)"
+  >
+    <div class="page-loader" *ngIf="loading">
+      <tui-loader [inheritColor]="true">Загрузка сотрудников...</tui-loader>
+    </div>
+
+    <form
+      class="dialog-form"
+      [formGroup]="CompleteServiceForm"
+      (ngSubmit)="onCompleteSubmit()"
+    >
+      <tui-textfield tuiChevron>
+        <label>Сотрудник</label>
+        <input
+          tuiComboBox
+          formControlName="worker"
+        />
+        <tui-data-list-wrapper
+          *tuiTextfieldDropdown
+          new
+          [items]="workerNames"
+        />
+      </tui-textfield>
+
+      <tui-error *ngIf="error" class="dialog-error" [error]="error"></tui-error>
+
+      <p class="dialog-actions">
+        <button
+          tuiButton
+          type="submit"
+          [disabled]="submitting"
+        >
+          Услуга выполнена
+          <tui-loader *ngIf="submitting" [inheritColor]="true"></tui-loader>
+        </button>
+      </p>
+    </form>
+  </ng-template>
+</div>

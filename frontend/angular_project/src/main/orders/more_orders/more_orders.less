@@ -1,0 +1,126 @@
+:host {
+  display: block;
+}
+
+.more_order_dialog {
+  display: block;
+}
+
+.dialog-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  align-items: start;
+  margin-bottom: 1rem;
+}
+
+.dialog-form > * {
+  min-width: 0;
+}
+
+.order-dates {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.dialog-error {
+  display: block;
+  margin-top: 1rem;
+}
+
+.page-loader {
+  margin-top: 1rem;
+}
+
+.table {
+  width: 100%;
+  margin-top: 1rem;
+}
+
+.dialog-footer {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: end;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.dialog-save {
+  justify-self: start;
+}
+
+.dialog-summary {
+  margin: 0;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.money-cell {
+  white-space: nowrap;
+}
+
+.dialog-empty {
+  margin: 1rem 0 0;
+  width: 100%;
+  text-align: center;
+}
+
+.dialog-add-service {
+  justify-self: end;
+  margin-top: 0;
+}
+
+.status-cell {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+}
+
+.status-dot {
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 999px;
+  flex-shrink: 0;
+}
+
+.action-head,
+.action-cell {
+  border: 0 !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  width: 1%;
+  padding-inline: 0.25rem;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.status-work {
+  background: #2f80ed;
+}
+
+.status-ready {
+  background: #27ae60;
+}
+
+@media (max-width: 900px) {
+  .dialog-form {
+    grid-template-columns: 1fr;
+  }
+
+  .dialog-footer {
+    grid-template-columns: 1fr;
+    justify-items: stretch;
+  }
+
+  .dialog-save,
+  .dialog-add-service {
+    justify-self: stretch;
+  }
+
+  .dialog-summary {
+    text-align: left;
+    white-space: normal;
+  }
+}

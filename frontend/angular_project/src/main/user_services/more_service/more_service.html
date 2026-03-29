@@ -1,0 +1,55 @@
+<div class="more_order_dialog">
+  <ng-template
+    [tuiDialogOptions]="{label: 'Подробнее об услуге', size: 's'}"
+    [(tuiDialog)]="openMoreService"
+    (tuiDialogChange)="onDialogStateChange($event)"
+  >
+    <form
+      class="dialog-form"
+      [formGroup]="MoreServiceForm"
+      (ngSubmit)="onUpdateServiceSubmit()"
+    >
+      <tui-textfield>
+        <label tuiLabel>Название услуги</label>
+        <input formControlName="name" tuiTextfield />
+      </tui-textfield>
+
+      <tui-textfield>
+        <label tuiLabel>Цена для легковых</label>
+        <input
+          formControlName="price1"
+          postfix="₽"
+          [tuiNumberFormat]="{decimalSeparator:',', precision:2, decimalMode:'always'}"
+          tuiInputNumber
+          [min]="0"
+          [step]="1000"
+        />
+      </tui-textfield>
+
+      <tui-textfield>
+        <label tuiLabel>Цена для грузовых</label>
+        <input
+          formControlName="price2"
+          postfix="₽"
+          [tuiNumberFormat]="{decimalSeparator:',', precision:2, decimalMode:'always'}"
+          tuiInputNumber
+          [min]="0"
+          [step]="1000"
+        />
+      </tui-textfield>
+
+      <tui-error *ngIf="errorMessage" class="dialog-error" [error]="errorMessage"></tui-error>
+
+      <p class="dialog-actions">
+        <button
+          tuiButton
+          type="submit"
+          [disabled]="submitting"
+        >
+          Сохранить
+          <tui-loader *ngIf="submitting" [inheritColor]="true"></tui-loader>
+        </button>
+      </p>
+    </form>
+  </ng-template>
+</div>

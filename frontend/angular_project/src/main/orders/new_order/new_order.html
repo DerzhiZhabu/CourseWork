@@ -1,0 +1,61 @@
+<div class="new_order_dialog">
+  <ng-template
+    [tuiDialogOptions]="{label: 'Создание нового заказа', size: 's'}"
+    [(tuiDialog)]="openNewOrder"
+    (tuiDialogChange)="onDialogStateChange($event)"
+  >
+    <form
+      class="dialog-form"
+      [formGroup]="NewOrderForm"
+      (ngSubmit)="onNewOrderSubmit()"
+    >
+      <tui-textfield>
+        <label tuiLabel>Введите название заказа</label>
+        <input formControlName="name" tuiTextfield />
+      </tui-textfield>
+
+      <tui-textfield>
+        <label tuiLabel>Введите имя клиента</label>
+        <input formControlName="client" tuiTextfield />
+      </tui-textfield>
+
+      <tui-textfield>
+        <label tuiLabel>Введите контактный телефон клиента</label>
+        <input
+          autocomplete="tel"
+          mask="+7 ### ###-##-##"
+          tuiInputPhone
+          formControlName="phone"
+          [attr.pattern]="pattern"
+          [(ngModel)]="value"
+        />
+      </tui-textfield>
+
+      <tui-textfield tuiChevron>
+        <input
+          placeholder="Тип транспорта"
+          tuiComboBox
+          formControlName="type"
+        />
+        <tui-data-list-wrapper
+          *tuiTextfieldDropdown
+          new
+          [items]="items"
+        />
+      </tui-textfield>
+
+      <tui-error *ngIf="errorMessage" class="dialog-error" [error]="errorMessage"></tui-error>
+
+      <p class="dialog-actions">
+        <button
+          tuiButton
+          type="submit"
+          [disabled]="submitting"
+        >
+          Создать
+          <tui-loader *ngIf="submitting" [inheritColor]="true"></tui-loader>
+        </button>
+      </p>
+    </form>
+  </ng-template>
+</div>

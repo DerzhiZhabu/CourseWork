@@ -1,0 +1,182 @@
+<div class="page-content">
+  <div class="page-header">
+    <div class="page-loader" *ngIf="loading">
+      <tui-loader [inheritColor]="true">Загрузка статистики...</tui-loader>
+    </div>
+  </div>
+
+  <div class="period-panel">
+    <tui-textfield>
+      <label tuiLabel>Дата с</label>
+      <input
+        tuiInputDate
+        [(ngModel)]="dateStart"
+        [ngModelOptions]="{standalone: true}"
+      />
+      <tui-calendar *tuiTextfieldDropdown />
+    </tui-textfield>
+
+    <tui-textfield>
+      <label tuiLabel>Дата по</label>
+      <input
+        tuiInputDate
+        [(ngModel)]="dateEnd"
+        [ngModelOptions]="{standalone: true}"
+      />
+      <tui-calendar *tuiTextfieldDropdown />
+    </tui-textfield>
+
+    <button
+      tuiButton
+      type="button"
+      [disabled]="loading"
+      (click)="onApplyPeriod()"
+    >
+      Применить
+      <tui-loader *ngIf="loading" [inheritColor]="true"></tui-loader>
+    </button>
+  </div>
+
+  <div class="tabs">
+    <button
+      tuiButton
+      type="button"
+      [appearance]="activeTab === salaryTab ? 'primary' : 'secondary'"
+      (click)="setActiveTab(salaryTab)"
+    >
+      Зарплаты
+    </button>
+
+    <button
+      tuiButton
+      type="button"
+      [appearance]="activeTab === servicesTab ? 'primary' : 'secondary'"
+      (click)="setActiveTab(servicesTab)"
+    >
+      Услуги
+    </button>
+
+    <button
+      tuiButton
+      type="button"
+      [appearance]="activeTab === profitTab ? 'primary' : 'secondary'"
+      (click)="setActiveTab(profitTab)"
+    >
+      Чистая прибыль
+    </button>
+  </div>
+
+  <tui-error *ngIf="error" [error]="error"></tui-error>
+
+  <ng-container *ngIf="activeTab === salaryTab">
+    <table
+      *ngIf="salaryRows.length; else emptySalary"
+      tuiTable
+      class="table"
+      [columns]="salaryColumns"
+      size="l"
+    >
+      <thead>
+      <tr tuiThGroup>
+        <th tuiTh>ФИО</th>
+        <th tuiTh>Зарплата</th>
+        <th tuiTh class="action-head"></th>
+      </tr>
+      </thead>
+      <tbody tuiTbody [data]="salaryRows">
+      <tr *ngFor="let item of salaryRows" tuiTr>
+        <td *tuiCell="'fio'" tuiTd>{{ getWorkerFullName(item) }}</td>
+        <td *tuiCell="'salary'" tuiTd>{{ item.salary | number:'1.2-2' }} ₽</td>
+        <td *tuiCell="'button'" tuiTd class="action-cell">
+          <button
+            appearance="flat"
+            iconStart="@tui.info"
+            tuiButton
+            tuiButtonVertical
+            type="button"
+            size="l"
+            (click)="onOpenWorkerDetails(item)"
+          >
+          </button>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+
+    <ng-template #emptySalary>
+      <p class="empty-text">За выбранный период начисленной зарплаты нет.</p>
+    </ng-template>
+
+    <div class="summary-block">
+      <p>Итого: {{ salaryTotal | number:'1.2-2' }} ₽</p>
+      <p>Средняя: {{ salaryAverage | number:'1.2-2' }} ₽</p>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="activeTab === servicesTab">
+    <table
+      *ngIf="serviceRows.length; else emptyServices"
+      tuiTable
+      class="table"
+      [columns]="serviceColumns"
+      size="l"
+    >
+      <thead>
+      <tr tuiThGroup>
+        <th tuiTh>Название</th>
+        <th tuiTh>Доход</th>
+      </tr>
+      </thead>
+      <tbody tuiTbody [data]="serviceRows">
+      <tr *ngFor="let item of serviceRows" tuiTr>
+        <td *tuiCell="'name'" tuiTd>{{ item.name }}</td>
+        <td *tuiCell="'income'" tuiTd>{{ item.income | number:'1.2-2' }} ₽</td>
+      </tr>
+      </tbody>
+    </table>
+
+    <ng-template #emptyServices>
+      <p class="empty-text">За выбранный период дохода по услугам нет.</p>
+    </ng-template>
+
+    <div class="summary-block">
+      <p>Итого: {{ servicesTotal | number:'1.2-2' }} ₽</p>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="activeTab === profitTab">
+    <table
+      tuiTable
+      class="table"
+      [columns]="profitColumns"
+      size="l"
+    >
+      <thead>
+      <tr tuiThGroup>
+        <th tuiTh>Показатель</th>
+        <th tuiTh>Сумма</th>
+      </tr>
+      </thead>
+      <tbody tuiTbody [data]="profitRows">
+      <tr *ngFor="let item of profitRows" tuiTr>
+        <td *tuiCell="'title'" tuiTd>{{ item.title }}</td>
+        <td *tuiCell="'amount'" tuiTd>{{ item.amount | number:'1.2-2' }} ₽</td>
+      </tr>
+      </tbody>
+    </table>
+
+    <div class="summary-block">
+      <p>Итого: {{ netProfit | number:'1.2-2' }} ₽</p>
+    </div>
+  </ng-container>
+
+  <app-more_workers
+    *ngIf="selectedWorker"
+    [openMoreWorkers]="openMoreWorker"
+    [workerInfo]="selectedWorker"
+    [initialDateStart]="dateStart"
+    [initialDateEnd]="dateEnd"
+    (updated)="onWorkerUpdated($event)"
+    (closed)="onCloseWorkerDetails()"
+  ></app-more_workers>
+</div>

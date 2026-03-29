@@ -1,0 +1,72 @@
+:host {
+  display: block;
+}
+
+.more_order_dialog {
+  display: block;
+}
+
+.dialog-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  align-items: start;
+}
+
+.dialog-form > * {
+  min-width: 0;
+}
+
+.dialog-actions {
+  grid-column: 1 / -1;
+  margin: 0;
+  padding-top: 0.25rem;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.period {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: flex-end;
+  margin-top: 1.25rem;
+}
+
+.period tui-textfield {
+  flex: 1 1 14rem;
+  min-width: 14rem;
+}
+
+.page-loader {
+  margin-top: 1rem;
+}
+
+.table {
+  width: 100%;
+  margin-top: 1rem;
+}
+
+.salary-cell,
+.dialog-summary {
+  white-space: nowrap;
+}
+
+.dialog-empty {
+  text-align: center;
+}
+
+.dialog-error {
+  display: block;
+  margin-top: 1rem;
+}
+
+p:not(.dialog-actions) {
+  margin: 1rem 0 0;
+}
+
+@media (max-width: 900px) {
+  .dialog-form {
+    grid-template-columns: 1fr;
+  }
+}

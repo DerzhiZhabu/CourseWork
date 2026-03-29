@@ -1,0 +1,36 @@
+{
+  "server": {
+    "readTimeoutSeconds": 15,
+    "writeTimeoutSeconds": 15,
+    "idleTimeoutSeconds": 60,
+    "shutdownTimeoutSeconds": 10
+  },
+  "cors": {
+    "allowOrigins": [
+      "http://localhost",
+      "http://127.0.0.1",
+      "http://localhost:4200"
+    ],
+    "allowMethods": [
+      "GET",
+      "POST",
+      "PUT",
+      "PATCH",
+      "DELETE",
+      "HEAD",
+      "OPTIONS"
+    ],
+    "allowHeaders": [
+      "Origin",
+      "Content-Length",
+      "Content-Type",
+      "Authorization",
+      "Accept"
+    ],
+    "exposeHeaders": [
+      "Content-Length"
+    ],
+    "allowCredentials": true,
+    "maxAgeHours": 12
+  }
+}

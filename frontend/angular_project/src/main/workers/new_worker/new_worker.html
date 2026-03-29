@@ -1,0 +1,54 @@
+<div class="new_order_dialog">
+  <ng-template
+    [tuiDialogOptions]="{label: 'Создание нового работника', size: 's'}"
+    [(tuiDialog)]="openNewWorker"
+    (tuiDialogChange)="onDialogStateChange($event)"
+  >
+    <form
+      class="dialog-form"
+      [formGroup]="NewWorkerForm"
+      (ngSubmit)="onNewWorkerSubmit()"
+    >
+      <tui-textfield>
+        <label tuiLabel>Введите имя</label>
+        <input formControlName="name" tuiTextfield />
+      </tui-textfield>
+
+      <tui-textfield>
+        <label tuiLabel>Введите фамилию</label>
+        <input formControlName="surname" tuiTextfield />
+      </tui-textfield>
+
+      <tui-textfield>
+        <label tuiLabel>Введите отчество</label>
+        <input formControlName="patronimic" tuiTextfield />
+      </tui-textfield>
+
+      <tui-textfield>
+        <label tuiLabel>Процент</label>
+        <input
+          formControlName="procent"
+          [tuiNumberFormat]="{decimalSeparator:',', precision:2, decimalMode:'always'}"
+          postfix="%"
+          tuiInputNumber
+          [min]="0"
+          [max]="100"
+          [step]="1"
+        />
+      </tui-textfield>
+
+      <tui-error *ngIf="errorMessage" class="dialog-error" [error]="errorMessage"></tui-error>
+
+      <p class="dialog-actions">
+        <button
+          tuiButton
+          type="submit"
+          [disabled]="submitting"
+        >
+          Создать
+          <tui-loader *ngIf="submitting" [inheritColor]="true"></tui-loader>
+        </button>
+      </p>
+    </form>
+  </ng-template>
+</div>

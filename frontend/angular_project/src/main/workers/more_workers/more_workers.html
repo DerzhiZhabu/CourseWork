@@ -1,0 +1,142 @@
+<div class="more_order_dialog">
+  <ng-template
+    [tuiDialogOptions]="{label: 'Подробнее о сотруднике', size: 'l'}"
+    [(tuiDialog)]="openMoreWorkers"
+    (tuiDialogChange)="onDialogStateChange($event)"
+  >
+    <form
+      [formGroup]="MoreWorkersForm"
+      (ngSubmit)="onUpdateWorkerSubmit()"
+      class="dialog-form worker-form"
+    >
+      <tui-textfield>
+        <label tuiLabel>Имя</label>
+        <input formControlName="name" tuiTextfield />
+      </tui-textfield>
+
+      <tui-textfield>
+        <label tuiLabel>Фамилия</label>
+        <input formControlName="surname" tuiTextfield />
+      </tui-textfield>
+
+      <tui-textfield>
+        <label tuiLabel>Отчество</label>
+        <input formControlName="patronimic" tuiTextfield />
+      </tui-textfield>
+
+      <tui-textfield tuiChevron>
+        <label>Статус</label>
+        <input
+          tuiComboBox
+          formControlName="sost"
+        />
+        <tui-data-list-wrapper
+          *tuiTextfieldDropdown
+          new
+          [items]="statuses"
+        />
+      </tui-textfield>
+
+      <tui-textfield>
+        <label tuiLabel>Процент</label>
+        <input
+          formControlName="procent"
+          [tuiNumberFormat]="{decimalSeparator:',', precision:2, decimalMode:'always'}"
+          postfix="%"
+          tuiInputNumber
+          [min]="0"
+          [max]="100"
+          [step]="1"
+          [readOnly]="true"
+        />
+      </tui-textfield>
+
+      <p class="dialog-actions">
+        <button
+          tuiButton
+          type="submit"
+          [disabled]="saving"
+        >
+          Сохранить
+          <tui-loader *ngIf="saving" [inheritColor]="true"></tui-loader>
+        </button>
+      </p>
+    </form>
+
+    <div class="period">
+      <tui-textfield>
+        <label tuiLabel>Дата с</label>
+        <input
+          tuiInputDate
+          [(ngModel)]="dateStart"
+          [ngModelOptions]="{standalone: true}"
+        />
+        <tui-calendar *tuiTextfieldDropdown />
+      </tui-textfield>
+
+      <tui-textfield>
+        <label tuiLabel>Дата по</label>
+        <input
+          tuiInputDate
+          [(ngModel)]="dateEnd"
+          [ngModelOptions]="{standalone: true}"
+        />
+        <tui-calendar *tuiTextfieldDropdown />
+      </tui-textfield>
+
+      <button
+        tuiButton
+        type="button"
+        [disabled]="loading"
+        (click)="onApplyPeriod()"
+      >
+        Применить
+        <tui-loader *ngIf="loading" [inheritColor]="true"></tui-loader>
+      </button>
+
+      <button
+        tuiButton
+        type="button"
+        [disabled]="printing"
+        (click)="onPrint()"
+      >
+        Печать
+        <tui-loader *ngIf="printing" [inheritColor]="true"></tui-loader>
+      </button>
+    </div>
+
+    <div class="page-loader" *ngIf="loading">
+      <tui-loader [inheritColor]="true">Загрузка услуг сотрудника...</tui-loader>
+    </div>
+
+    <table
+      *ngIf="data.length; else emptyWorkerServices"
+      tuiTable
+      class="table"
+      [columns]="columns"
+      size="l"
+    >
+      <thead>
+      <tr tuiThGroup>
+        <th tuiTh>Услуга</th>
+        <th tuiTh>Номер заказа</th>
+        <th tuiTh>Зарплата</th>
+      </tr>
+      </thead>
+      <tbody tuiTbody [data]="data">
+      <tr *ngFor="let item of data" tuiTr>
+        <td *tuiCell="'sname'" tuiTd>{{ item.sname }}</td>
+        <td *tuiCell="'number'" tuiTd>{{ item.number }}</td>
+        <td *tuiCell="'summary'" tuiTd class="salary-cell">{{ item.summary | number:'1.2-2' }}₽</td>
+      </tr>
+      </tbody>
+    </table>
+
+    <ng-template #emptyWorkerServices>
+      <p class="dialog-empty" *ngIf="!error && !loading">За выбранный период выполненных услуг нет.</p>
+    </ng-template>
+
+    <tui-error *ngIf="error" class="dialog-error" [error]="error"></tui-error>
+    <p class="dialog-summary">Итого зарплата: {{ total | number:'1.2-2' }}₽</p>
+  </ng-template>
+</div>

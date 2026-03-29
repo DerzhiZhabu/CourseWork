@@ -1,0 +1,98 @@
+<div class="main_body">
+  <div class="app-layout">
+    <aside class="mini-sidebar" [class.expanded]="isExpanded">
+      <button
+        appearance="secondary"
+        iconStart="@tui.arrow-right-left"
+        size="xl"
+        tuiIconButton
+        type="button"
+        [style.border-radius.%]="100"
+        class="toggle-btn"
+        (click)="isExpanded = !isExpanded"
+      >
+      </button>
+
+      <nav class="mini-nav">
+        <button
+          *ngFor="let item of menuItems"
+          tuiButton
+          class="mini-nav-btn"
+          [routerLink]="item.link"
+          routerLinkActive="active"
+          [class.expanded]="isExpanded"
+          [style.border-radius.%]="100"
+          [attr.title]="item.text"
+          appearance="secondary"
+          [iconStart]="item.icon"
+          size="xl"
+          type="button"
+        >
+          <span class="btn-label" *ngIf="isExpanded">{{ item.text }}</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-spacer"></div>
+
+      <tui-badged-content class="badged-nav waiting-btn-wrap">
+        <button
+          tuiButton
+          class="mini-nav-btn waiting-btn"
+          [routerLink]="waitingItem.link"
+          routerLinkActive="active"
+          [class.expanded]="isExpanded"
+          [style.border-radius.%]="100"
+          [attr.title]="waitingItem.text"
+          appearance="secondary"
+          [iconStart]="waitingItem.icon"
+          size="xl"
+          type="button"
+        >
+          <span class="btn-label" *ngIf="isExpanded">{{ waitingItem.text }}</span>
+        </button>
+
+        <tui-badge-notification
+          *ngIf="waitingOrdersCount > 0"
+          tuiSlot="top"
+          size="s"
+        >
+          {{ waitingOrdersCount }}
+        </tui-badge-notification>
+      </tui-badged-content>
+
+      <button
+        tuiButton
+        class="mini-nav-btn profile-btn"
+        [class.expanded]="isExpanded"
+        [style.border-radius.%]="100"
+        [attr.title]="profileItem.text"
+        appearance="secondary"
+        [iconStart]="profileItem.icon"
+        size="xl"
+        type="button"
+        (click)="onMenuClick(profileItem.id)"
+      >
+        <span class="btn-label" *ngIf="isExpanded">{{ profileItem.text }}</span>
+      </button>
+
+      <button
+        tuiButton
+        class="mini-nav-btn logout-btn"
+        [class.expanded]="isExpanded"
+        [style.border-radius.%]="100"
+        [attr.title]="logoutItem.text"
+        appearance="secondary"
+        [iconStart]="logoutItem.icon"
+        size="xl"
+        type="button"
+        (click)="onMenuClick(logoutItem.id)"
+      >
+        <span class="btn-label" *ngIf="isExpanded">{{ logoutItem.text }}</span>
+      </button>
+    </aside>
+
+    <main class="content-area">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>

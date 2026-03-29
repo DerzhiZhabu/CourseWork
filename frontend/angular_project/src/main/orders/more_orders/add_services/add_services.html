@@ -1,0 +1,80 @@
+<div class="add_service_dialog">
+  <ng-template
+    [tuiDialogOptions]="{label: 'Добавление услуг в заказ', size: 'l'}"
+    [(tuiDialog)]="openAddServices"
+    (tuiDialogChange)="onDialogStateChange($event)"
+  >
+    <div class="table-wrap">
+      <table
+        tuiTable
+        class="table"
+        [columns]="columns"
+        size="m"
+      >
+        <thead>
+          <tr tuiThGroup>
+            <th tuiTh>Название услуги</th>
+            <th tuiTh [minWidth]="180">Цена за ед., ₽</th>
+            <th tuiTh [minWidth]="140">Количество</th>
+            <th tuiTh>Статус</th>
+            <th tuiTh class="action-head"></th>
+          </tr>
+        </thead>
+
+        <tbody tuiTbody [data]="data">
+          <tr *ngFor="let item of data" tuiTr>
+            <td *tuiCell="'name'" tuiTd>{{ item.sname }}</td>
+
+            <td *tuiCell="'price'" tuiTd class="price-cell">
+              <tui-textfield class="price-input">
+                <input
+                  [formControl]="getPriceControl(item.id)"
+                  [tuiNumberFormat]="{decimalSeparator: ',', precision: 2, decimalMode: 'always'}"
+                  tuiInputNumber
+                  [min]="0"
+                  [readOnly]="isReadOnly(item)"
+                />
+              </tui-textfield>
+            </td>
+
+            <td *tuiCell="'samount'" tuiTd class="amount-cell">
+              <tui-textfield class="amount-input">
+                <input
+                  [formControl]="getColControl(item.id)"
+                  [tuiNumberFormat]="{decimalMode: 'not-zero'}"
+                  tuiInputNumber
+                  [min]="1"
+                  [readOnly]="isReadOnly(item)"
+                />
+              </tui-textfield>
+            </td>
+
+            <td *tuiCell="'status'" tuiTd>
+              <span *ngIf="hasServiceInOrder(item)" class="status-cell">
+                <span class="status-dot status-ready"></span>
+                <span>{{ getServiceStatusLabel(item) }}</span>
+              </span>
+            </td>
+
+            <td *tuiCell="'add_button'" tuiTd class="action-cell">
+              <button
+                *ngIf="!isReadOnly(item)"
+                appearance="flat"
+                iconStart="@tui.pencil-line"
+                tuiButton
+                type="button"
+                size="s"
+                [disabled]="addingServiceId === item.id"
+                (click)="addService(item)"
+              >
+                <tui-loader *ngIf="addingServiceId === item.id" [inheritColor]="true"></tui-loader>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <tui-error *ngIf="error" class="dialog-error" [error]="error"></tui-error>
+  </ng-template>
+</div>

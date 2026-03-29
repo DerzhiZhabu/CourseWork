@@ -1,0 +1,184 @@
+<div class="profile-page">
+  <div class="page-header">
+    <div class="page-loader" *ngIf="loading">
+      <tui-loader [inheritColor]="true">Загрузка профиля...</tui-loader>
+    </div>
+  </div>
+
+  <div class="profile-card">
+    <h2>Личный кабинет</h2>
+
+    <tui-error *ngIf="error" [error]="error"></tui-error>
+    <p *ngIf="success">{{ success }}</p>
+
+    <tui-textfield>
+      <label tuiLabel>Логин</label>
+      <input
+        tuiTextfield
+        [value]="login"
+        [readOnly]="true"
+      />
+    </tui-textfield>
+
+    <tui-textfield>
+      <label tuiLabel>Уровень доступа</label>
+      <input
+        tuiTextfield
+        [value]="acces"
+        [readOnly]="true"
+      />
+    </tui-textfield>
+
+    <div class="profile-actions">
+      <button
+        tuiButton
+        type="button"
+        (click)="showChangePassword()"
+      >
+        Сменить пароль
+      </button>
+
+      <button
+        *ngIf="acces === 'main'"
+        tuiButton
+        appearance="secondary"
+        type="button"
+        (click)="showCreateUser()"
+      >
+        Создать пользователя
+      </button>
+    </div>
+
+    <form
+      *ngIf="changePasswordMode"
+      [formGroup]="ChangePasswordForm"
+      class="profile-form"
+    >
+      <tui-textfield>
+        <label tuiLabel>Старый пароль</label>
+        <input
+          formControlName="oldPassword"
+          tuiTextfield
+          type="password"
+        />
+        <tui-icon tuiPassword />
+      </tui-textfield>
+
+      <tui-textfield>
+        <label tuiLabel>Новый пароль</label>
+        <input
+          formControlName="newPassword"
+          tuiTextfield
+          type="password"
+        />
+        <tui-icon tuiPassword />
+      </tui-textfield>
+
+      <div class="profile-actions">
+        <button
+          tuiButton
+          type="button"
+          [disabled]="passwordLoading"
+          (click)="onChangePasswordSubmit()"
+        >
+          Сохранить
+          <tui-loader *ngIf="passwordLoading" [inheritColor]="true"></tui-loader>
+        </button>
+
+        <button
+          tuiButton
+          appearance="secondary"
+          type="button"
+          (click)="hideChangePassword()"
+        >
+          Отмена
+        </button>
+      </div>
+    </form>
+
+    <form
+      *ngIf="createUserMode"
+      [formGroup]="NewChildUserForm"
+      class="profile-form"
+    >
+      <tui-textfield>
+        <label tuiLabel>Логин пользователя</label>
+        <input
+          formControlName="login"
+          tuiTextfield
+        />
+      </tui-textfield>
+
+      <tui-textfield>
+        <label tuiLabel>Пароль</label>
+        <input
+          formControlName="password"
+          tuiTextfield
+          type="password"
+        />
+        <tui-icon tuiPassword />
+      </tui-textfield>
+
+      <tui-textfield tuiChevron>
+        <label>Уровень доступа</label>
+        <input
+          formControlName="acces"
+          tuiComboBox
+        />
+        <tui-data-list-wrapper
+          *tuiTextfieldDropdown
+          new
+          [items]="roleOptions"
+        />
+      </tui-textfield>
+
+      <div class="profile-actions">
+        <button
+          tuiButton
+          type="button"
+          [disabled]="childUserLoading"
+          (click)="onCreateChildUserSubmit()"
+        >
+          Создать
+          <tui-loader *ngIf="childUserLoading" [inheritColor]="true"></tui-loader>
+        </button>
+
+        <button
+          tuiButton
+          appearance="secondary"
+          type="button"
+          (click)="hideCreateUser()"
+        >
+          Отмена
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <div *ngIf="acces === 'main'" class="users-card">
+    <h3>Связанные аккаунты</h3>
+
+    <table
+      tuiTable
+      [columns]="columns"
+      class="table"
+      size="m"
+    >
+      <thead>
+      <tr tuiThGroup>
+        <th tuiTh>Логин</th>
+        <th tuiTh>Доступ</th>
+      </tr>
+      </thead>
+      <tbody tuiTbody [data]="childUsers">
+      <tr
+        *ngFor="let item of childUsers"
+        tuiTr
+      >
+        <td *tuiCell="'login'" tuiTd>{{ item.login }}</td>
+        <td *tuiCell="'acces'" tuiTd>{{ item.acces }}</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
