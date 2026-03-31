@@ -34,6 +34,25 @@ export function trimmedMinLengthValidator(minLength: number): ValidatorFn {
   };
 }
 
+export function trimmedMaxLengthValidator(maxLength: number): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const value = toTrimmedString(control.value);
+
+    if (!value) {
+      return null;
+    }
+
+    return value.length <= maxLength
+      ? null
+      : {
+          trimmedMaxLength: {
+            requiredLength: maxLength,
+            actualLength: value.length,
+          },
+        };
+  };
+}
+
 export function oneOfValidator(options: readonly string[]): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
     const value = toTrimmedString(control.value);

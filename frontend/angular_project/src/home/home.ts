@@ -10,6 +10,7 @@ import {AuthService} from '../app/services/auth.service';
 import {
   getControlErrorMessage,
   passwordComplexityValidator,
+  trimmedMaxLengthValidator,
   trimmedMinLengthValidator,
   trimmedRequiredValidator,
 } from '../app/utils/form-validators';
@@ -39,10 +40,12 @@ export class Home {
     login: new FormControl('', [
       trimmedRequiredValidator(),
       trimmedMinLengthValidator(4),
+      trimmedMaxLengthValidator(30),
     ]),
     password: new FormControl('', [
       trimmedRequiredValidator(),
       Validators.minLength(8),
+      Validators.maxLength(30),
       passwordComplexityValidator(),
     ]),
   });
@@ -51,14 +54,17 @@ export class Home {
     login: new FormControl('', [
       trimmedRequiredValidator(),
       trimmedMinLengthValidator(4),
+      trimmedMaxLengthValidator(30),
     ]),
     password: new FormControl('', [
       trimmedRequiredValidator(),
       Validators.minLength(8),
+      Validators.maxLength(30),
       passwordComplexityValidator(),
     ]),
     confirmPassword: new FormControl('', [
       trimmedRequiredValidator(),
+      Validators.maxLength(30),
     ]),
   });
 
@@ -185,10 +191,12 @@ export class Home {
       getControlErrorMessage(this.LoginForm.controls.login, {
         trimmedRequired: 'Введите логин',
         trimmedMinLength: 'Логин должен содержать минимум 4 символа',
+        trimmedMaxLength: 'Логин должен содержать не более 30 символов',
       }) ||
       getControlErrorMessage(this.LoginForm.controls.password, {
         trimmedRequired: 'Введите пароль',
         minlength: 'Пароль должен содержать минимум 8 символов',
+        maxlength: 'Пароль должен содержать не более 30 символов',
         passwordComplexity:
           'Пароль должен содержать только латинские буквы, минимум одну цифру и один спецсимвол',
       }) ||
@@ -201,15 +209,18 @@ export class Home {
       getControlErrorMessage(this.RegisterForm.controls.login, {
         trimmedRequired: 'Введите логин',
         trimmedMinLength: 'Логин должен содержать минимум 4 символа',
+        trimmedMaxLength: 'Логин должен содержать не более 30 символов',
       }) ||
       getControlErrorMessage(this.RegisterForm.controls.password, {
         trimmedRequired: 'Введите пароль',
         minlength: 'Пароль должен содержать минимум 8 символов',
+        maxlength: 'Пароль должен содержать не более 30 символов',
         passwordComplexity:
           'Пароль должен содержать только латинские буквы, минимум одну цифру и один спецсимвол',
       }) ||
       getControlErrorMessage(this.RegisterForm.controls.confirmPassword, {
         trimmedRequired: 'Подтвердите пароль',
+        maxlength: 'Подтвердите пароль не длиннее 30 символов',
       }) ||
       'Проверьте корректность введённых данных'
     );

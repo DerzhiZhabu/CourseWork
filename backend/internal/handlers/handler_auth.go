@@ -2,6 +2,8 @@ package handler
 
 import (
 	"net/http"
+	"strings"
+	"unicode/utf8"
 
 	"backend-api/database"
 	tokens "backend-api/jwt"
@@ -10,12 +12,36 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+const maxAuthFieldLength = 30
+
+func exceedsTrimmedAuthLength(value string) bool {
+	return utf8.RuneCountInString(strings.TrimSpace(value)) > maxAuthFieldLength
+}
+
+func exceedsAuthLength(value string) bool {
+	return utf8.RuneCountInString(value) > maxAuthFieldLength
+}
+
 func (h *Handler) Register(c *gin.Context) {
 	var req models.RegisterRequest
 
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "Неверные данные: " + err.Error(),
+		})
+		return
+	}
+
+	if exceedsTrimmedAuthLength(req.Login) {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Логин должен содержать не более 30 символов",
+		})
+		return
+	}
+
+	if exceedsAuthLength(req.Password) {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Пароль должен содержать не более 30 символов",
 		})
 		return
 	}
@@ -110,6 +136,20 @@ func (h *Handler) LoginFirst(c *gin.Context) {
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "Неверные данные: " + err.Error(),
+		})
+		return
+	}
+
+	if exceedsTrimmedAuthLength(req.Login) {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Логин должен содержать не более 30 символов",
+		})
+		return
+	}
+
+	if exceedsAuthLength(req.Password) {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Пароль должен содержать не более 30 символов",
 		})
 		return
 	}
@@ -235,7 +275,21 @@ func (h *Handler) CreateChildUser(c *gin.Context) {
 		return
 	}
 
-	if len(req.Password) < 6 {
+	if exceedsTrimmedAuthLength(req.Login) {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Логин должен содержать не более 30 символов",
+		})
+		return
+	}
+
+	if exceedsAuthLength(req.Password) {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Пароль должен содержать не более 30 символов",
+		})
+		return
+	}
+
+	if utf8.RuneCountInString(req.Password) < 6 {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "Пароль должен быть не короче 6 символов",
 		})
@@ -279,7 +333,21 @@ func (h *Handler) ChangePassword(c *gin.Context) {
 		return
 	}
 
-	if len(req.NewPassword) < 6 {
+	if exceedsAuthLength(req.OldPassword) {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Пароль должен содержать не более 30 символов",
+		})
+		return
+	}
+
+	if exceedsAuthLength(req.NewPassword) {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Новый пароль должен содержать не более 30 символов",
+		})
+		return
+	}
+
+	if utf8.RuneCountInString(req.NewPassword) < 6 {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "Новый пароль должен быть не короче 6 символов",
 		})
