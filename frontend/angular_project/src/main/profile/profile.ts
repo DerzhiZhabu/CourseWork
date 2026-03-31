@@ -12,6 +12,7 @@ import {
   getControlErrorMessage,
   oneOfValidator,
   passwordComplexityValidator,
+  trimmedMaxLengthValidator,
   trimmedMinLengthValidator,
   trimmedRequiredValidator,
 } from '../../app/utils/form-validators';
@@ -46,10 +47,12 @@ export class Profile implements OnInit, OnDestroy {
   protected readonly ChangePasswordForm = new FormGroup({
     oldPassword: new FormControl('', [
       trimmedRequiredValidator(),
+      Validators.maxLength(30),
     ]),
     newPassword: new FormControl('', [
       trimmedRequiredValidator(),
       Validators.minLength(8),
+      Validators.maxLength(30),
       passwordComplexityValidator(),
     ]),
   });
@@ -58,10 +61,12 @@ export class Profile implements OnInit, OnDestroy {
     login: new FormControl('', [
       trimmedRequiredValidator(),
       trimmedMinLengthValidator(4),
+      trimmedMaxLengthValidator(30),
     ]),
     password: new FormControl('', [
       trimmedRequiredValidator(),
       Validators.minLength(8),
+      Validators.maxLength(30),
       passwordComplexityValidator(),
     ]),
     acces: new FormControl('manage', [
@@ -312,10 +317,12 @@ export class Profile implements OnInit, OnDestroy {
     return (
       getControlErrorMessage(this.ChangePasswordForm.controls.oldPassword, {
         trimmedRequired: 'Введите старый пароль',
+        maxlength: 'Пароль должен содержать не более 30 символов',
       }) ||
       getControlErrorMessage(this.ChangePasswordForm.controls.newPassword, {
         trimmedRequired: 'Введите новый пароль',
         minlength: 'Новый пароль должен содержать минимум 8 символов',
+        maxlength: 'Новый пароль должен содержать не более 30 символов',
         passwordComplexity:
           'Новый пароль должен содержать только латинские буквы, минимум одну цифру и один спецсимвол',
       }) ||
@@ -328,10 +335,12 @@ export class Profile implements OnInit, OnDestroy {
       getControlErrorMessage(this.NewChildUserForm.controls.login, {
         trimmedRequired: 'Введите логин пользователя',
         trimmedMinLength: 'Логин должен содержать минимум 4 символа',
+        trimmedMaxLength: 'Логин должен содержать не более 30 символов',
       }) ||
       getControlErrorMessage(this.NewChildUserForm.controls.password, {
         trimmedRequired: 'Введите пароль пользователя',
         minlength: 'Пароль должен содержать минимум 8 символов',
+        maxlength: 'Пароль должен содержать не более 30 символов',
         passwordComplexity:
           'Пароль должен содержать только латинские буквы, минимум одну цифру и один спецсимвол',
       }) ||
