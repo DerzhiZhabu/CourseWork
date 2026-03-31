@@ -1,12 +1,12 @@
-import { Routes } from '@angular/router';
-import { Home } from '../home/home';
-import { Main } from '../main/main';
-import { Orders } from '../main/orders/orders';
-import { Profile } from '../main/profile/profile';
-import { Stats } from '../main/stats/stats';
-import { UserServices } from '../main/user_services/services';
-import { Waiting } from '../main/waiting/waiting';
-import { Workers } from '../main/workers/workers';
+import {Routes} from '@angular/router';
+import {Home} from '../home/home';
+import {Main} from '../main/main';
+import {Orders} from '../main/orders/orders';
+import {Profile} from '../main/profile/profile';
+import {Stats} from '../main/stats/stats';
+import {UserServices} from '../main/user_services/services';
+import {Waiting} from '../main/waiting/waiting';
+import {Workers} from '../main/workers/workers';
 
 export const routes: Routes = [
   {
@@ -21,37 +21,38 @@ export const routes: Routes = [
       {
         path: 'orders',
         component: Orders,
-        data: { title: 'Заказы' }
+        data: {title: 'Заказы'}
       },
       {
         path: 'services',
         component: UserServices,
-        data: { title: 'Услуги' }
+        data: {title: 'Услуги'}
       },
       {
         path: 'workers',
         component: Workers,
-        data: { title: 'Сотрудники' }
+        data: {title: 'Работники'}
       },
       {
         path: 'stats',
         component: Stats,
-        data: { title: 'Статистика' }
+        data: {title: 'Статистика'}
       },
       {
         path: 'waiting',
         component: Waiting,
-        data: { title: 'Ожидающие' }
+        data: {title: 'Ожидающие'}
       },
       {
         path: 'profile',
         component: Profile,
-        data: { title: 'Личный кабинет' }
+        data: {title: 'Личный кабинет'}
       },
     ],
   },
   {
     path: '',
     component: Home,
+    data: {title: 'Главная'}
   },
 ];
