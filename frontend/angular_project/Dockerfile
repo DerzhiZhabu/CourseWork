@@ -11,7 +11,7 @@ RUN npm run build --configuration=production
 
 FROM nginx:1.29.6-alpine
 
-COPY nginx.conf /etc/nginx/nginx.conf
+COPY default.conf.template /etc/nginx/templates/default.conf.template
 COPY --from=builder /app/dist/untitled4/browser /usr/share/nginx/html
 
 EXPOSE 80
