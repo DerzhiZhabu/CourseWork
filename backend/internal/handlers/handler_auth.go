@@ -77,7 +77,7 @@ func (h *Handler) Register(c *gin.Context) {
 		return
 	}
 
-	c.SetCookie("refresh_token", refreshToken, 7*24*60*60, "/", "", true, true)
+	c.SetCookie("refresh_token", refreshToken, 7*24*60*60, "/", "", false, true)
 
 	c.JSON(http.StatusCreated, gin.H{
 		"message": "Регистрация прошла успешно",
@@ -98,7 +98,7 @@ func (h *Handler) LoginWithRefreshToken(c *gin.Context) {
 
 	refrClaims, err := tokens.ValidateRefreshToken(refreshToken)
 	if err != nil {
-		c.SetCookie("refresh_token", "", -1, "/", "", true, true)
+		c.SetCookie("refresh_token", "", -1, "/", "", false, true)
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": "Некорректный токен: " + err.Error(),
 		})
@@ -107,7 +107,7 @@ func (h *Handler) LoginWithRefreshToken(c *gin.Context) {
 
 	err = h.repo.CheckRefreshStores(refreshToken, refrClaims.UserID, refrClaims.TokenID)
 	if err != nil {
-		c.SetCookie("refresh_token", "", -1, "/", "", true, true)
+		c.SetCookie("refresh_token", "", -1, "/", "", false, true)
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": "Некорректный токен: " + err.Error(),
 		})
@@ -189,7 +189,7 @@ func (h *Handler) LoginFirst(c *gin.Context) {
 		return
 	}
 
-	c.SetCookie("refresh_token", refreshToken, 7*24*60*60, "/", "", true, true)
+	c.SetCookie("refresh_token", refreshToken, 7*24*60*60, "/", "", false, true)
 
 	c.JSON(http.StatusCreated, gin.H{
 		"message": "Авторизация прошла успешно",
@@ -205,7 +205,7 @@ func (h *Handler) Logout(c *gin.Context) {
 		_ = h.repo.DeleteRefreshToken(refreshToken)
 	}
 
-	c.SetCookie("refresh_token", "", -1, "/", "", true, true)
+	c.SetCookie("refresh_token", "", -1, "/", "", false, true)
 
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Выход выполнен успешно",
