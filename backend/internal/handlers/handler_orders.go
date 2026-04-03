@@ -72,7 +72,7 @@ func (h *Handler) NewOrder(c *gin.Context) {
 		return
 	}
 
-	result, err := h.repo.СreateNewOrder(req)
+	result, err := h.repo.CreateNewOrder(req)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": "Ошибка при создании заказа" + err.Error(),
@@ -119,7 +119,7 @@ func (h *Handler) CompleteOrderService(c *gin.Context) {
 
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "РќРµРІРµСЂРЅС‹Рµ РґР°РЅРЅС‹Рµ: " + err.Error(),
+			"error": "Неверные данные: " + err.Error(),
 		})
 		return
 	}
@@ -127,13 +127,13 @@ func (h *Handler) CompleteOrderService(c *gin.Context) {
 	result, err := h.repo.CompleteOrderService(req)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": "РћС€РёР±РєР° РїСЂРё Р·Р°РІРµСЂС€РµРЅРёРё СѓСЃР»СѓРіРё" + err.Error(),
+			"error": "Ошибка при завершении услуги" + err.Error(),
 		})
 		return
 	}
 
 	c.JSON(http.StatusCreated, gin.H{
-		"message": "РЈСЃР»СѓРіР° РѕС‚РјРµС‡РµРЅР° РєР°Рє РІС‹РїРѕР»РЅРµРЅРЅР°СЏ",
+		"message": "Услуга отмечена как выполненная",
 		"user": gin.H{
 			"result": result,
 		},
@@ -145,7 +145,7 @@ func (h *Handler) UndoOrderService(c *gin.Context) {
 
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "РќРµРІРµСЂРЅС‹Рµ РґР°РЅРЅС‹Рµ: " + err.Error(),
+			"error": "Неверные данные: " + err.Error(),
 		})
 		return
 	}
@@ -153,13 +153,39 @@ func (h *Handler) UndoOrderService(c *gin.Context) {
 	result, err := h.repo.UndoOrderService(req)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": "РћС€РёР±РєР° РїСЂРё РІРѕР·РІСЂР°С‚Рµ СЃС‚Р°С‚СѓСЃР° СѓСЃР»СѓРіРё" + err.Error(),
+			"error": "Ошибка при возврате статуса услуги" + err.Error(),
 		})
 		return
 	}
 
 	c.JSON(http.StatusCreated, gin.H{
-		"message": "РЈСЃР»СѓРіР° СѓСЃРїРµС€РЅРѕ РІРѕР·РІСЂР°С‰РµРЅР° РІ СЃС‚Р°С‚СѓСЃ РЅРµ РіРѕС‚РѕРІР°",
+		"message": "Услуга успешно возвращена в статус не готова",
+		"user": gin.H{
+			"result": result,
+		},
+	})
+}
+
+func (h *Handler) DeleteOrderService(c *gin.Context) {
+	var req models.DeleteOrderServiceRecieve
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Неверные данные: " + err.Error(),
+		})
+		return
+	}
+
+	result, err := h.repo.DeleteOrderService(req)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Ошибка при удалении услуги из заказа" + err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusCreated, gin.H{
+		"message": "Услуга успешно удалена из заказа",
 		"user": gin.H{
 			"result": result,
 		},

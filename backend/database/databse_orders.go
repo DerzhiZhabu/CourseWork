@@ -52,7 +52,7 @@ func (r *Repository) getUserAcces(userID int64) (string, error) {
 	return acces, nil
 }
 
-func (r *Repository) СreateNewOrder(req models.NewOrderRecieve) (string, error) {
+func (r *Repository) CreateNewOrder(req models.NewOrderRecieve) (string, error) {
 
 	claims, err := tokens.ValidateAccessToken(req.AccessToken)
 	if err != nil {
@@ -336,6 +336,82 @@ func (r *Repository) UndoOrderService(req models.UndoOrderServiceRecieve) (strin
 
 	if rowsAffected == 0 {
 		return "", fmt.Errorf("service rollback failed")
+	}
+
+	return "Success", nil
+}
+
+func (r *Repository) DeleteOrderService(req models.DeleteOrderServiceRecieve) (string, error) {
+
+	claims, err := tokens.ValidateAccessToken(req.AccessToken)
+	if err != nil {
+		return "", err
+	}
+	userID := claims.UserID
+
+	var primeID int64
+	var currentUserAcces string
+	var orderStatus string
+	var serviceStatus int64
+
+	query := `
+        SELECT p.id
+		FROM prime_users p
+		JOIN users u ON u.prime_id = p.id
+		WHERE u.id = $1;
+    `
+
+	err = r.database.QueryRow(query, userID).Scan(&primeID)
+	if err != nil {
+		return "", fmt.Errorf("query failed: %w", err)
+	}
+
+	query = `
+        SELECT o.sost, os.sost
+		FROM orders_services os
+		INNER JOIN orders o ON o.id = os.order_id
+		WHERE os.id = $1
+		AND os.prime_id = $2
+    `
+
+	err = r.database.QueryRow(query, req.OSID, primeID).Scan(&orderStatus, &serviceStatus)
+	if err != nil {
+		return "", fmt.Errorf("order service query failed: %w", err)
+	}
+
+	currentUserAcces, err = r.getUserAcces(userID)
+	if err != nil {
+		return "", err
+	}
+
+	if isOrderLockedForEditing(orderStatus) {
+		return "", fmt.Errorf("locked orders cannot be edited")
+	}
+
+	if currentUserAcces == "base" {
+		return "", fmt.Errorf("base users cannot delete services from order")
+	}
+
+	if serviceStatus == 1 {
+		return "", fmt.Errorf("completed services cannot be deleted")
+	}
+
+	result, err := r.database.Exec(`
+        DELETE FROM orders_services
+		WHERE id = $1
+		AND prime_id = $2
+    `, req.OSID, primeID)
+	if err != nil {
+		return "", fmt.Errorf("query failed: %w", err)
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return "", fmt.Errorf("rows affected failed: %w", err)
+	}
+
+	if rowsAffected == 0 {
+		return "", fmt.Errorf("service delete failed")
 	}
 
 	return "Success", nil

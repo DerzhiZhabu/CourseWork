@@ -35,6 +35,11 @@ type NewChildUserRecieve struct {
 	Acces       string `json:"acces"`
 }
 
+type DeleteChildUserRecieve struct {
+	AccessToken string `json:"token"`
+	ID          int64  `json:"id"`
+}
+
 type LoginResponse struct {
 	AccessToken  string `json:"accessToken"`
 	RefreshToken string `json:"refreshToken"`
@@ -133,6 +138,11 @@ type CompleteOrderServiceRecieve struct {
 }
 
 type UndoOrderServiceRecieve struct {
+	AccessToken string `json:"token"`
+	OSID        int64  `json:"osid"`
+}
+
+type DeleteOrderServiceRecieve struct {
 	AccessToken string `json:"token"`
 	OSID        int64  `json:"osid"`
 }

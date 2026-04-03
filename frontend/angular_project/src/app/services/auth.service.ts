@@ -12,6 +12,10 @@ import {
   IChildUser,
   ICompleteOrderServiceReceive,
   ICompleteOrderServiceSend,
+  IDeleteChildUserReceive,
+  IDeleteChildUserSend,
+  IDeleteOrderServiceReceive,
+  IDeleteOrderServiceSend,
   IUndoOrderServiceReceive,
   IUndoOrderServiceSend,
   ILoadChildUsersReceive,
@@ -115,6 +119,12 @@ export class AuthService {
     );
   }
 
+  delete_child_user(credentials: IDeleteChildUserSend): Observable<IDeleteChildUserReceive> {
+    return this.apiService.delete_child_user(credentials).pipe(
+      catchError(error => throwError(() => error))
+    );
+  }
+
   get_orders(credentials: IOrdersSend): Observable<IOrdersReceive> {
     return this.apiService.get_orders(credentials).pipe(
       catchError(error => throwError(() => error))
@@ -171,6 +181,12 @@ export class AuthService {
 
   undo_order_service(credentials: IUndoOrderServiceSend): Observable<IUndoOrderServiceReceive> {
     return this.apiService.undo_order_service(credentials).pipe(
+      catchError(error => throwError(() => error))
+    );
+  }
+
+  delete_order_service(credentials: IDeleteOrderServiceSend): Observable<IDeleteOrderServiceReceive> {
+    return this.apiService.delete_order_service(credentials).pipe(
       catchError(error => throwError(() => error))
     );
   }

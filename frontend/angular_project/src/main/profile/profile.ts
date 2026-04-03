@@ -42,7 +42,7 @@ export class Profile implements OnInit, OnDestroy {
   private readonly autoRefreshMs = 5 * 60 * 1000;
   private refreshTimerId: ReturnType<typeof setInterval> | null = null;
   protected readonly roleOptions = ['manage', 'base'];
-  protected readonly columns = ['login', 'acces'];
+  protected readonly columns = ['login', 'acces', 'actions'];
 
   protected readonly ChangePasswordForm = new FormGroup({
     oldPassword: new FormControl('', [
@@ -82,6 +82,7 @@ export class Profile implements OnInit, OnDestroy {
   protected loading = false;
   protected passwordLoading = false;
   protected childUserLoading = false;
+  protected deletingChildUserId: number | null = null;
   protected changePasswordMode = false;
   protected createUserMode = false;
   protected childUsers: IChildUser[] = [];
@@ -217,6 +218,51 @@ export class Profile implements OnInit, OnDestroy {
         this.childUserLoading = false;
         this.success = '';
         this.error = error?.error?.error || 'Ошибка при создании пользователя';
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  protected onDeleteChildUser(item: IChildUser): void {
+    const token = this.authService.getAccessToken();
+
+    if (!token) {
+      this.router.navigate(['/']);
+      return;
+    }
+
+    const confirmed = window.confirm(
+      `Удалить связанный аккаунт "${item.login}"? Это действие нельзя отменить.`
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    this.deletingChildUserId = item.id;
+    this.error = '';
+    this.success = '';
+
+    this.authService.delete_child_user({
+      token,
+      id: item.id,
+    }).subscribe({
+      next: () => {
+        this.deletingChildUserId = null;
+        this.childUsers = this.childUsers.filter((child) => child.id !== item.id);
+        this.error = '';
+        this.success = 'Связанный аккаунт успешно удалён';
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        this.deletingChildUserId = null;
+        if (error.status === 401) {
+          this.router.navigate(['/']);
+          return;
+        }
+
+        this.error = error?.error?.error || 'Ошибка при удалении пользователя';
+        this.success = '';
         this.cdr.detectChanges();
       }
     });
