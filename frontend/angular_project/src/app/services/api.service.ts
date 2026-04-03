@@ -31,6 +31,8 @@ import {
   ICompleteOrderServiceReceive,
   IUndoOrderServiceSend,
   IUndoOrderServiceReceive,
+  IDeleteOrderServiceSend,
+  IDeleteOrderServiceReceive,
   ILoadWorkersSend,
   ILoadWorkersReceive,
   ILoadWorkerServiceSend,
@@ -38,6 +40,8 @@ import {
   IProfileReceive,
   IChangePasswordSend,
   IChangePasswordReceive,
+  IDeleteChildUserSend,
+  IDeleteChildUserReceive,
   ILoadChildUsersReceive,
   INewChildUserSend,
   INewChildUserReceive,
@@ -84,6 +88,12 @@ export class ApiService {
     });
   }
 
+  delete_child_user(data: IDeleteChildUserSend): Observable<IDeleteChildUserReceive> {
+    return this.http.post<IDeleteChildUserReceive>(`${this.apiUrl}/deletechilduser`, data, {
+      withCredentials: true
+    });
+  }
+
   new_order(data: INewOrderSend): Observable<INewOrderReceive> {
     return this.http.post<INewOrderReceive>(`${this.apiUrl}/neworder`, data, {
       withCredentials: true
@@ -104,6 +114,12 @@ export class ApiService {
 
   undo_order_service(data: IUndoOrderServiceSend): Observable<IUndoOrderServiceReceive> {
     return this.http.post<IUndoOrderServiceReceive>(`${this.apiUrl}/undoorderservice`, data, {
+      withCredentials: true
+    });
+  }
+
+  delete_order_service(data: IDeleteOrderServiceSend): Observable<IDeleteOrderServiceReceive> {
+    return this.http.post<IDeleteOrderServiceReceive>(`${this.apiUrl}/deleteorderservice`, data, {
       withCredentials: true
     });
   }

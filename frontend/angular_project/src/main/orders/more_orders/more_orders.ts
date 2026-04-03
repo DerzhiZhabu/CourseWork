@@ -137,6 +137,10 @@ export class MoreOrdersComponent implements OnInit {
     return this.currentUserAcces !== 'base';
   }
 
+  protected canDeleteService(item: IServiceInOrder): boolean {
+    return this.currentUserAcces !== 'base' && item.sost !== 1;
+  }
+
   protected get availableOrderStatuses(): string[] {
     if (this.persistedOrderStatus === this.closedOrderStatus) {
       return [this.closedOrderStatus];
@@ -257,6 +261,39 @@ export class MoreOrdersComponent implements OnInit {
       error: (err) => {
         this.serviceActionOsId = null;
         console.error('Undo Service error:', err);
+      }
+    });
+  }
+
+  protected onDeleteService(item: IServiceInOrder): void {
+    if (!this.canDeleteService(item) || this.isOrderLocked) {
+      return;
+    }
+
+    const isConfirmed = window.confirm('Подтвердить удаление услуги из заказа?');
+
+    if (!isConfirmed) {
+      return;
+    }
+
+    this.serviceActionOsId = item.osid;
+    this.error = '';
+
+    this.authService.delete_order_service({
+      token: this.authService.getAccessToken()!,
+      osid: item.osid,
+    }).subscribe({
+      next: () => {
+        this.serviceActionOsId = null;
+        this.data = this.data.filter((currentItem) => currentItem.osid !== item.osid);
+        this.cdr.detectChanges();
+        this.loadServices();
+      },
+      error: (err) => {
+        this.serviceActionOsId = null;
+        console.error('Delete Service error:', err);
+        this.error = err?.error?.error || 'Ошибка при удалении услуги из заказа';
+        this.cdr.detectChanges();
       }
     });
   }

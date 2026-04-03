@@ -168,6 +168,7 @@
       <tr tuiThGroup>
         <th tuiTh>Логин</th>
         <th tuiTh>Доступ</th>
+        <th tuiTh class="actions-head"></th>
       </tr>
       </thead>
       <tbody tuiTbody [data]="childUsers">
@@ -177,6 +178,17 @@
       >
         <td *tuiCell="'login'" tuiTd>{{ item.login }}</td>
         <td *tuiCell="'acces'" tuiTd>{{ item.acces }}</td>
+        <td *tuiCell="'actions'" tuiTd class="actions-cell">
+          <button
+            appearance="flat"
+            iconStart="@tui.circle-minus"
+            tuiButton
+            type="button"
+            [disabled]="deletingChildUserId === item.id"
+            (click)="onDeleteChildUser(item)"
+          >
+          </button>
+        </td>
       </tr>
       </tbody>
     </table>

@@ -323,6 +323,40 @@ func (h *Handler) CreateChildUser(c *gin.Context) {
 	})
 }
 
+func (h *Handler) DeleteChildUser(c *gin.Context) {
+	var req models.DeleteChildUserRecieve
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Invalid data: " + err.Error(),
+		})
+		return
+	}
+
+	err := h.repo.DeleteChildUser(req)
+	if err != nil {
+		status := http.StatusInternalServerError
+
+		switch err {
+		case database.ErrAccessDenied, database.ErrDeleteCurrentUser:
+			status = http.StatusBadRequest
+		case database.ErrUserNotFound:
+			status = http.StatusNotFound
+		}
+
+		c.JSON(status, gin.H{
+			"error": "Delete user error: " + err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "User deleted successfully",
+		"user": gin.H{
+			"result": "Success",
+		},
+	})
+}
 func (h *Handler) ChangePassword(c *gin.Context) {
 	var req models.ChangePasswordRecieve
 

@@ -141,6 +141,16 @@
             (click)="onUndoService(item)"
           >
           </button>
+          <button
+            *ngIf="canDeleteService(item)"
+            appearance="flat"
+            iconStart="@tui.circle-minus"
+            tuiButton
+            type="button"
+            [disabled]="isOrderLocked || serviceActionOsId === item.osid"
+            (click)="onDeleteService(item)"
+          >
+          </button>
         </td>
       </tr>
       </tbody>

@@ -23,6 +23,8 @@ var (
 	ErrInvalidAccess      = errors.New("некорректный уровень доступа")
 )
 
+var ErrDeleteCurrentUser = errors.New("cannot delete current account")
+
 func (r *Repository) CreatePrimeUser(req models.RegisterRequest) (*models.User, error) {
 	var exists bool
 	err := r.database.QueryRow("SELECT EXISTS(SELECT 1 FROM users WHERE login = $1)", req.Login).Scan(&exists)
@@ -291,4 +293,58 @@ func (r *Repository) CreateChildUser(req models.NewChildUserRecieve) (*models.Ch
 	}
 
 	return &child, nil
+}
+
+func (r *Repository) DeleteChildUser(req models.DeleteChildUserRecieve) error {
+	currentUser, err := r.GetProfile(req.AccessToken)
+	if err != nil {
+		return err
+	}
+
+	if currentUser.Acces != "main" {
+		return ErrAccessDenied
+	}
+
+	if currentUser.ID == req.ID {
+		return ErrDeleteCurrentUser
+	}
+
+	var targetAcces string
+	err = r.database.QueryRow(`
+		SELECT acces
+		FROM users
+		WHERE id = $1 AND prime_id = $2
+	`, req.ID, currentUser.Prime_id).Scan(&targetAcces)
+	if err == sql.ErrNoRows {
+		return ErrUserNotFound
+	}
+	if err != nil {
+		return err
+	}
+
+	if targetAcces == "main" {
+		return ErrAccessDenied
+	}
+
+	if _, err = r.database.Exec("DELETE FROM refresh_token WHERE user_id = $1", req.ID); err != nil {
+		return err
+	}
+
+	result, err := r.database.Exec(`
+		DELETE FROM users
+		WHERE id = $1 AND prime_id = $2
+	`, req.ID, currentUser.Prime_id)
+	if err != nil {
+		return err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if rowsAffected == 0 {
+		return ErrUserNotFound
+	}
+
+	return nil
 }

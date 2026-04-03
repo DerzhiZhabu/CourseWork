@@ -139,6 +139,7 @@ export interface IChangePasswordReceive {
 }
 
 export interface IChildUser {
+  id: number;
   login: string;
   acces: string;
 }
@@ -160,6 +161,18 @@ export interface INewChildUserSend {
 export interface INewChildUserReceive {
   message: string;
   user: IChildUser;
+}
+
+export interface IDeleteChildUserSend {
+  token: string;
+  id: number;
+}
+
+export interface IDeleteChildUserReceive {
+  message: string;
+  user: {
+    result: string;
+  };
 }
 
 export interface IOrder {
@@ -324,6 +337,18 @@ export interface IUndoOrderServiceSend {
 }
 
 export interface IUndoOrderServiceReceive {
+  message: string;
+  user:{
+    result: string;
+  }
+}
+
+export interface IDeleteOrderServiceSend {
+  token: string;
+  osid: number;
+}
+
+export interface IDeleteOrderServiceReceive {
   message: string;
   user:{
     result: string;
