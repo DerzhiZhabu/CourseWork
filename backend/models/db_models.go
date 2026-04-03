@@ -19,7 +19,7 @@ type User struct {
 }
 
 type ChildUser struct {
-	ID    int64  `json:"-"`
+	ID    int64  `json:"id"`
 	Login string `json:"login"`
 	Acces string `json:"acces"`
 }

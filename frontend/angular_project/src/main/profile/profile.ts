@@ -231,6 +231,13 @@ export class Profile implements OnInit, OnDestroy {
       return;
     }
 
+    if (!Number.isInteger(item.id)) {
+      this.error = 'Не удалось определить идентификатор пользователя для удаления';
+      this.success = '';
+      this.cdr.detectChanges();
+      return;
+    }
+
     const confirmed = window.confirm(
       `Удалить связанный аккаунт "${item.login}"? Это действие нельзя отменить.`
     );
